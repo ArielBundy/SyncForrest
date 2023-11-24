@@ -1,0 +1,14 @@
+nibabel
+nipype
+datalad
+nilearn
+nltools
+hypertools
+timecorr
+pliers 
+statesegmentation 
+networkx 
+nltk 
+requests 
+urllib3
+rsatoolbox
