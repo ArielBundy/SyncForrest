@@ -2,7 +2,7 @@ virtual enviorment installation:
 # use Ubuntus command line, don't forget to change usr path
 conda create -n fmri python=3.9 anaconda
 conda activate fmri
-cd /path/to/fmri
+cd /path/to/git_folder
 conda install --yes --file  env_require_conda
 pip3 install -r env_require_pip --ignore-installed
 pip3 install psutil==5.9.0
