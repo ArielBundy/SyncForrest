@@ -100,7 +100,7 @@ def timeInterpolation(time_arr,value_arr,samp_rate):
     # linear interpolation using numpy.interp
     newY = np.interp(newX,x,y)
     # plot interpolation
-    plotInterpolation(x,y,newX,newY)
+    #plotInterpolation(x,y,newX,newY) - disabeled
     return newX,newY
 
 def smoothing(x,y,win_size):
@@ -112,7 +112,7 @@ def smoothing(x,y,win_size):
     import numpy as np
     kernel = np.ones(win_size) / win_size
     ySmooth = np.convolve(y, kernel, mode='same')
-    plotCheck(x,y,ySmooth,title = 'smooth vs unsmooth',yAx ="Rating [a.u]")
+    #plotCheck(x,y,ySmooth,title = 'smooth vs unsmooth',yAx ="Rating [a.u]") - disabeled
     return ySmooth
 
 def plotCheck(x,y,yNew,title,yAx,plotAll=False):
