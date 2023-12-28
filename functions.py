@@ -594,7 +594,7 @@ def behaveRSA(x):
                                                 figsize = (20,20),
                                                 cmap = 'viridis_r',
                                                 gridlines = calculateGrid(run1_subNumVec),
-                                                vmin = 0, vmax = 2,
+                                                vmin = 0, vmax = 1.565,
                                                 show_colorbar='panel',pattern_descriptor='trials1')
     
     # save figure
@@ -623,7 +623,7 @@ def behaveRSA(x):
                                                 figsize=(20,20),
                                                 cmap = 'viridis_r',
                                                 gridlines=calculateGrid(run2_subNumVec),
-                                                vmin = 0, vmax = 2,
+                                                vmin = 0, vmax = 1.565,
                                                 show_colorbar='panel',pattern_descriptor='trials2')
     # save figure
     plt.savefig(output_dir+"\\RDM_run-2.png",dpi=900)
@@ -682,3 +682,46 @@ def createPredictorLabels(data,t,title):
     #ax.fill_between(x, meanR+stdR, meanR-stdR, facecolor='gray', alpha=0.5,label='STD')
     return volume_labels, segment_labels
 
+def calculate_one_sided_t_test_against_mean(df,mean):
+    # Function to calculate one-sided t-test against a popmean given by user
+    # after r to z transformation
+    import pandas as pd
+    import numpy as np
+    from scipy.stats import ttest_1samp
+    import pingouin as pg
+    
+    # Create an empty list to store the results
+    results = []
+    # Iterate through each column in the DataFrame
+    for column in df.columns:
+        # Extract the column as a NumPy array and remove NaN values
+        data = df[column]
+        # Perform r to z transformation
+        z_data = np.arctanh(data); z_mean = np.arctanh(mean) 
+        # Calculate the t-statistic and p-value
+        t_stat,p_value = ttest_1samp(z_data.dropna(), popmean=z_mean, alternative='greater')
+        # Perform Bayesian t-test
+        bayesian_t_result = pg.ttest(z_data, z_mean, correction=True, alternative = 'greater')
+        bayes_factor = bayesian_t_result['BF10'].values[0]  # Extract Bayes Factor
+        # Append the results to the list
+        results.append({
+            'X': column,
+            'T-Statistic': t_stat,
+            'P-Value (Traditional)': p_value / 2,  # One-sided p-value
+            'Bayesian T-Value': bayesian_t_result['T'][0],
+            'Bayesian P-Value': bayesian_t_result['p-val'][0],
+            'Bayes Factor': bayes_factor
+        })
+        
+    print(f"one sided t test: mean(X) > {mean}")
+    # Print the results
+    for result in results:
+        print(f"X: {result['X']}")
+        print(f"T-Statistic: {result['T-Statistic']}")
+        print(f"P-Value: {result['P-Value (Traditional)']}")
+        print(f"Bayesian T-Value: {result['Bayesian T-Value']}")
+        print(f"Bayesian P-Value: {result['Bayesian P-Value']}")
+        print(f"Bayes Factor: {result['Bayes Factor']}",'\n')
+    print("-------------------------------------------------------------------")
+    # Return the list of results
+    return results
